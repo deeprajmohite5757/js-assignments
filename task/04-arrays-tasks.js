@@ -575,11 +575,13 @@ function distinct(arr) {
  *   }
  */
 function group(array, keySelector, valueSelector) {
-  /*var Multimap = require("multimap");
-  var map = new Multimap();
-  array.map((item) => map.set(item.country, item.city));
-  return map;*/
-  throw new Error("Not implemented");
+  let Multimap = require("multimap");
+  let map = new Multimap();
+  array.map((item) => {
+    map.set(keySelector(item), valueSelector(item));
+  });
+  return map;
+  //throw new Error("Not implemented");
 }
 
 /**
