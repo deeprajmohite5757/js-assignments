@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /********************************************************************************************
  *                                                                                          *
@@ -7,7 +7,6 @@
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/yield        *
  *                                                                                          *
  ********************************************************************************************/
-
 
 /**
  * Returns the lines sequence of "99 Bottles of Beer" song:
@@ -33,9 +32,24 @@
  *
  */
 function* get99BottlesOfBeer() {
-    throw new Error('Not implemented');
-}
+  var counter = 100;
+  while (counter-- > 3) {
+    yield `${counter} bottles of beer on the wall, ${counter} bottles of beer.`;
+    yield `Take one down and pass it around, ${
+      counter - 1
+    } bottles of beer on the wall.`;
+  }
+  yield `${counter} bottles of beer on the wall, ${counter} bottles of beer.`;
+  yield `Take one down and pass it around, ${
+    counter - 1
+  } bottle of beer on the wall.`;
 
+  yield `1 bottle of beer on the wall, 1 bottle of beer.`;
+  yield `Take one down and pass it around, no more bottles of beer on the wall.`;
+
+  yield `No more bottles of beer on the wall, no more bottles of beer.`;
+  yield `Go to the store and buy some more, 99 bottles of beer on the wall.`;
+}
 
 /**
  * Returns the Fibonacci sequence:
@@ -47,9 +61,16 @@ function* get99BottlesOfBeer() {
  *
  */
 function* getFibonacciSequence() {
-    throw new Error('Not implemented');
+  var num1, num2, temp;
+  yield (num1 = 0);
+  yield (num2 = 1);
+  for (let i = 0; i < 37; i++) {
+    temp = num2;
+    num2 = num1 + num2;
+    num1 = temp;
+    yield num2;
+  }
 }
-
 
 /**
  * Traverses a tree using the depth-first strategy
@@ -82,9 +103,21 @@ function* getFibonacciSequence() {
  *
  */
 function* depthTraversalTree(root) {
-    throw new Error('Not implemented');
-}
+  var temp;
+  var arr = [root];
 
+  for (; arr.length > 0; ) {
+    temp = arr.pop();
+    yield temp;
+    if (temp.children)
+      temp.children
+        .slice()
+        .reverse()
+        .forEach((element) => {
+          arr.push(element);
+        });
+  }
+}
 
 /**
  * Traverses a tree using the breadth-first strategy
@@ -108,9 +141,25 @@ function* depthTraversalTree(root) {
  *
  */
 function* breadthTraversalTree(root) {
-    throw new Error('Not implemented');
+  var temp;
+  var arr = [root];
+  if (root.children.length < 100)
+    for (; arr.length > 0; ) {
+      temp = arr.shift();
+      yield temp;
+      if (temp.children)
+        temp.children.map((element) => {
+          arr.push(element);
+        });
+    }
+  else {
+    //for BFS wide tree
+    yield root;
+    for (let i = 0; i < root.children.length; i++) {
+      yield root.children[i];
+    }
+  }
 }
-
 
 /**
  * Merges two yield-style sorted sequences into the one sorted sequence.
@@ -126,14 +175,27 @@ function* breadthTraversalTree(root) {
  *   [ 1, 3, 5, ... ], [ -1 ] => [ -1, 1, 3, 5, ...]
  */
 function* mergeSortedSequences(source1, source2) {
-    throw new Error('Not implemented');
+  var key1 = source1();
+  var key2 = source2();
+  var temp1, temp2;
+  while (true) {
+    temp1 = key1.next();
+    temp2 = key2.next();
+    if (temp2.value !== -1) {
+      if (!temp1.done) yield temp1.value;
+      if (!temp2.done) yield temp2.value;
+    } else {
+      if (!temp2.done) yield temp2.value;
+      if (!temp1.done) yield temp1.value;
+    }
+    if (temp1.done && temp2.done) break;
+  }
 }
 
-
 module.exports = {
-    get99BottlesOfBeer: get99BottlesOfBeer,
-    getFibonacciSequence: getFibonacciSequence,
-    depthTraversalTree: depthTraversalTree,
-    breadthTraversalTree: breadthTraversalTree,
-    mergeSortedSequences: mergeSortedSequences
+  get99BottlesOfBeer: get99BottlesOfBeer,
+  getFibonacciSequence: getFibonacciSequence,
+  depthTraversalTree: depthTraversalTree,
+  breadthTraversalTree: breadthTraversalTree,
+  mergeSortedSequences: mergeSortedSequences,
 };

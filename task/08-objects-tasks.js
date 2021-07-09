@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**************************************************************************************************
  *                                                                                                *
@@ -7,7 +7,6 @@
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object        *
  *                                                                                                *
  **************************************************************************************************/
-
 
 /**
  * Returns the rectagle object with width and height parameters and getArea() method
@@ -23,9 +22,14 @@
  *    console.log(r.getArea());   // => 200
  */
 function Rectangle(width, height) {
-    throw new Error('Not implemented');
+  this.width = width;
+  this.height = height;
 }
-
+Rectangle.prototype = {
+  getArea: function () {
+    return this.width * this.height;
+  },
+};
 
 /**
  * Returns the JSON representation of specified object
@@ -38,9 +42,8 @@ function Rectangle(width, height) {
  *    { width: 10, height : 20 } => '{"height":10,"width":20}'
  */
 function getJSON(obj) {
-    throw new Error('Not implemented');
+  return JSON.stringify(obj);
 }
-
 
 /**
  * Returns the object of specified type from JSON representation
@@ -54,9 +57,14 @@ function getJSON(obj) {
  *
  */
 function fromJSON(proto, json) {
-    throw new Error('Not implemented');
+  this.obj = Object.create(proto);
+  this.obj.__proto__ = proto;
+  json = JSON.parse(json);
+  for (const key in json) {
+    this.obj[key] = json[key];
+  }
+  return this.obj;
 }
-
 
 /**
  * Css selectors builder
@@ -107,40 +115,61 @@ function fromJSON(proto, json) {
  */
 
 const cssSelectorBuilder = {
+  element: function (value) {
+    if (!this.value) this.value = value;
+    else this.value = this.value + value;
+    return this;
+  },
 
-    element: function(value) {
-        throw new Error('Not implemented');
-    },
+  id: function (value) {
+    if (!this.value) this.value = `#${value}`;
+    else this.value = this.value + `#${value}`;
 
-    id: function(value) {
-        throw new Error('Not implemented');
-    },
+    return this;
+  },
 
-    class: function(value) {
-        throw new Error('Not implemented');
-    },
+  class: function (value) {
+    if (!this.value) this.value = `.${value}`;
+    else this.value = this.value + `.${value}`;
 
-    attr: function(value) {
-        throw new Error('Not implemented');
-    },
+    return this;
+  },
 
-    pseudoClass: function(value) {
-        throw new Error('Not implemented');
-    },
+  attr: function (value) {
+    if (!this.value) this.value = `[${value}]`;
+    else this.value = this.value + `[${value}]`;
 
-    pseudoElement: function(value) {
-        throw new Error('Not implemented');
-    },
+    return this;
+  },
 
-    combine: function(selector1, combinator, selector2) {
-        throw new Error('Not implemented');
-    },
+  pseudoClass: function (value) {
+    if (!this.value) this.value = `:${value}`;
+    else this.value = this.value + `:${value}`;
+
+    return this;
+  },
+
+  pseudoElement: function (value) {
+    if (!this.value) this.value = `::${value}`;
+    else this.value = this.value + `::${value}`;
+
+    return this;
+  },
+
+  combine: function (selector1, combinator, selector2) {
+    throw new Error("Not implemented");
+  },
+
+  stringify: function () {
+    let temp = this.value;
+    this.value = undefined;
+    return temp;
+  },
 };
 
-
 module.exports = {
-    Rectangle: Rectangle,
-    getJSON: getJSON,
-    fromJSON: fromJSON,
-    cssSelectorBuilder: cssSelectorBuilder
+  Rectangle: Rectangle,
+  getJSON: getJSON,
+  fromJSON: fromJSON,
+  cssSelectorBuilder: cssSelectorBuilder,
 };
